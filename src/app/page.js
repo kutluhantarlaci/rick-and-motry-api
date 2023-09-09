@@ -1,95 +1,119 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+'use client'
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+
+const urlApi = 'https://rickandmortyapi.com/api/character'
+
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    const [character, setCharacter] = useState([])
+    const [filter, setFilter] = useState({ page: 1 })
+    const [loading, setLoading] = useState(false)
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+    function getCharacters() {
+        setCharacter([])
+        setLoading(true)
+        let endPoint = urlApi
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+        let myFilter = filter
+        if (myFilter.gender === 'all') {
+            delete myFilter['gender']
+        }
+        if (myFilter.status === 'all') {
+            delete myFilter['status']
+        }
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
+        let filters = new URLSearchParams(myFilter).toString()
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+        if (filters) {
+            endPoint += `?${filters}`
+        }
+
+        fetch(`${endPoint}`)
+            .then((resp) => resp.json())
+            .then((resp) => {
+                setCharacter(resp.results)
+                setLoading(false)
+
+            })
+            .catch((e) => {
+                console.log('error', e)
+            })
+    }
+
+    useEffect(() => {
+        getCharacters()
+    }, [filter])
+
+    const characterList = character.map(char => {
+        return (
+
+            <li key={`char_${char.id}`}>
+                <Link href={`/character/${char.id}`}>
+                    {char.id} {char.name}
+                </Link>
+            </li>
+        )
+    })
+
+    if (loading) {
+        return (<div>Loading...</div>)
+
+    }
+
+    return (
+        <>
+            <form>
+                <select
+                    defaultValue={filter.status}
+                    onChange={(e) => {
+                        setFilter({
+                            ...filter,
+                            status: e.target.value
+                        })
+                    }}>
+                    <option value='all'>All Status</option>
+                    <option value='dead'>Dead</option>
+                    <option value='alive'>Alive</option>
+                    <option value='unknown'>Unknown</option>
+
+                </select>
+                <select
+                    defaultValue={filter.gender}
+                    onChange={(e) => {
+                        setFilter({
+                            ...filter,
+                            gender: e.target.value
+                        })
+                    }}>
+                    <option value='all'>All Gender</option>
+                    <option value='male'>Male</option>
+                    <option value='female'>Female</option>
+                    <option value='unknown'>Unknown</option>
+
+                </select>
+            </form>
+
+            <ul className={'characters'}>
+                {characterList}
+            </ul>
+
+            <button onClick={() => {
+                setFilter({
+                    ...filter,
+                    page: filter.page > 1 ? filter.page - 1 : 42
+                })
+            }}>Prev</button >
+
+            <div>{filter.page}</div>
+
+            <button onClick={() => {
+                setFilter({
+                    ...filter,
+                    page: filter.page < 42 ? filter.page + 1 : 1
+                })
+            }}>Next</button>
+        </>
+    )
 }
