@@ -51,17 +51,6 @@ export default function Home() {
 
     const characterList = character.map(char => {
         return (
-
-           /*<li key={`char_${char.id}`}>
-                <Link href={`/character/${char.id}`}>
-                    {char.id} {char.name}
-                </Link>
-            </li>
-
-            */
-
-
-
           <div className={'card'}>
                 <img src={char.image}/>
                 <div className={'character-info'}>
@@ -81,17 +70,7 @@ export default function Home() {
                     </ul>
                 </div>
             </div>
-
-
-
-
         )
-
-        
-        
-        
-
-        
     })
 
     if (loading) {
@@ -155,7 +134,6 @@ export default function Home() {
             <div className={'botside'}>
                     {characterList}
             </div>
-
         </div>
     )
 }
