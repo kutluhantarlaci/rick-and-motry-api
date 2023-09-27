@@ -26,7 +26,7 @@ export default function CharacterDetail({ params: { characterId } }) {
   return (
     <>
       <div>{characterId}. Character's Details Page</div>
-      <img src={character.image} />
+      <img src={character.image} alt={'image'}/>
       <div>{character.name}</div>
       <div>{character.gender}</div>
       <div>{character.species}</div>
