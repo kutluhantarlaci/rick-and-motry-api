@@ -70,8 +70,14 @@ export default function Home() {
                     </Link>
                     <ul>
                         <li>{char.status} - {char.species}</li>
-                        <li className={'low-op'}>{char.gender}</li>
-                        <li className={'low-op'}>{char.origin.name}</li>
+                        <li>
+                            <span className={'bold'}>Gender: </span>
+                            <span className={'low-op'}> {char.gender}</span>
+                        </li>
+                        <li>
+                            <span className={'bold'}>Origin: </span>
+                            <span className={'low-op'}>{char.origin.name}</span>
+                        </li>
                     </ul>
                 </div>
             </div>
