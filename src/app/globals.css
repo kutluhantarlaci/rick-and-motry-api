@@ -67,6 +67,9 @@ a {
   align-items: center;
 }
 
+.form select:hover {
+  cursor: pointer;
+}
 .form-pagination button,
 .form select{
   border-radius: 10px;
