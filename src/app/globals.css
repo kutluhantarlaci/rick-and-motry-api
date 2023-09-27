@@ -38,6 +38,10 @@ a {
   color: #202329;
 }
 
+.header .hover:hover {
+  color: orange;
+}
+
 .topside {
   display: flex;
   flex-direction: column;
@@ -135,4 +139,5 @@ a {
   font-weight: bold;
   opacity: 1;
 }
+
 
